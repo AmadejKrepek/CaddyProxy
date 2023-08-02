@@ -4,7 +4,9 @@
             "automation": {
                 "policies": [
                     {
-                        "subjects": [],
+                        "subjects": [
+                            "meteoinfo.si"
+                        ],
                         "issuers": [
                             {
                                 "module": "acme"
@@ -27,7 +29,27 @@
                     "listen": [
                         ":443"
                     ],
-                    "routes": []
+                    "routes": [
+                        {
+                            "match": [
+                                {
+                                    "host": [
+                                        "meteoinfo.si"
+                                    ]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "reverse_proxy",
+                                    "upstreams": [
+                                        {
+                                            "dial": "172.17.0.1:8000"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
                 }
             }
         }
