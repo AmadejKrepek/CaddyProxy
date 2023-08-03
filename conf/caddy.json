@@ -5,7 +5,8 @@
                 "policies": [
                     {
                         "subjects": [
-                            "meteoinfo.si"
+                            "meteoinfo.si",
+                            "www.meteoinfo.si"
                         ],
                         "issuers": [
                             {
@@ -34,7 +35,8 @@
                             "match": [
                                 {
                                     "host": [
-                                        "meteoinfo.si"
+                                        "meteoinfo.si",
+                                        "www.meteoinfo.si"
                                     ]
                                 }
                             ],
