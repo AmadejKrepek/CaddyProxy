@@ -1,5 +1,63 @@
 {
     "apps": {
+        "http": {
+            "http_port": 80,
+            "https_port": 443,
+            "servers": {
+                "srv0": {
+                    "listen": [":443"],
+                    "routes": [
+                        {
+                            "match": [
+                                {
+                                    "host": ["meteoinfo.si"]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "subroute",
+                                    "routes": [
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "rewrite",
+                                                    "uri": "https://www.meteoinfo.si{http.request.uri}"
+                                                },
+                                                {
+                                                    "handler": "static_response",
+                                                    "headers": {
+                                                        "Location": ["{http.request.uri.path}"],
+                                                        "Server": ["Caddy"]
+                                                    },
+                                                    "status_code": 308
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "match": [
+                                {
+                                    "host": ["www.meteoinfo.si"]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "reverse_proxy",
+                                    "upstreams": [
+                                        {
+                                            "dial": "172.17.0.1:8000"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
         "tls": {
             "automation": {
                 "policies": [
@@ -20,39 +78,6 @@
             },
             "cache": {
                 "capacity": 10000
-            }
-        },
-        "http": {
-            "http_port": 80,
-            "https_port": 443,
-            "servers": {
-                "multi": {
-                    "listen": [
-                        ":443"
-                    ],
-                    "routes": [
-                        {
-                            "match": [
-                                {
-                                    "host": [
-                                        "meteoinfo.si",
-                                        "www.meteoinfo.si"
-                                    ]
-                                }
-                            ],
-                            "handle": [
-                                {
-                                    "handler": "reverse_proxy",
-                                    "upstreams": [
-                                        {
-                                            "dial": "172.17.0.1:8000"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
             }
         }
     }
